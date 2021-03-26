@@ -1,20 +1,18 @@
-module.exports = app =>{
 
     const lookup = require('../controllers/lookup.controller')
 
-    const router = require('express').Router()
+    const routers = require('express').Router()
 
-    router.post('/',lookup.create)
+    routers.post('/lookup',lookup.create)
 
-    router.get('/lookups',lookup.getAll)
+    routers.get('/lookups',lookup.getAll)
 
-    // router.get('/:name',lookup.findOne)
+    routers.get('/:name',lookup.getOne)
 
-    router.put('/lookup',lookup.update)
+    routers.put('/lookup',lookup.update)
 
-    router.delete('/lookup',lookup.delete)
+    routers.delete('/lookup',lookup.delete)
 
-    router.delete('/lookups',lookup.deleteAll)
-
-    app.use('/api/lookups',router)
-}
+    routers.delete('/lookups',lookup.deleteAll)
+    
+module.exports = routers
