@@ -31,7 +31,7 @@ module.exports = {
             res.send(data)
         })
         .catch(err =>{
-            status.sendErr(res,err)
+            sendErr(res,err)
         })
     },
 
@@ -65,7 +65,7 @@ module.exports = {
             sendConfirmation(res,num)
         })
         .catch(err =>{
-            status.sendErr(res,err)
+            sendErr(res,err)
         })
     },
 

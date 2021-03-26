@@ -1,7 +1,8 @@
 module.exports = {
+    
     HOST:'localhost',
     USER: 'root',
-    PASSWORD: '<password>',
+    PASSWORD: 'Dare7devil',
     DB:'subreddit',
     dialect:'mysql',
     pool:{
