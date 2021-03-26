@@ -1,16 +1,16 @@
 const { Sequelize } = require('sequelize')
+const dbConfig = require('../configs/db.config')
 
-const sequelize = new Sequelize('subreddit', 'root', 'Dare7devil',{
+const sequelize = new Sequelize(dbConfig.DB, dbConfig.USER, dbConfig.PASSWORD, {
+  host: dbConfig.HOST,
+  dialect: dbConfig.dialect,
+  operatorsAliases: false,
 
-    host: 'localhost',
-    dialect: 'mysql',
-    operatorsAliases: false,
-
-    pool: {
-        max: 5,
-        min: 0,
-        acquire: 30000,
-        idle: 10000
+  pool: {
+    max: dbConfig.pool.max,
+    min: dbConfig.pool.min,
+    acquire: dbConfig.pool.acquire,
+    idle: dbConfig.pool.idle
   }
 })
 

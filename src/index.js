@@ -6,9 +6,9 @@ const lookups = require('./routes/lookup.route')
 const infos = require('./routes/info.route')
 const port = process.env.PORT || 8080
 
-// app.get(`/`, (req, res) => {
-//   res.send({ message: `hello, world!` })
-// })
+app.get(`/`, (req, res) => {
+  res.send({ message: `Welcome to the Europa Report!` })
+})
 
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
