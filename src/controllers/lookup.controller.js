@@ -1,71 +1,32 @@
 const db = require('../models')
 const Lookup = db.lookups
-const Op = db.Sequelize.Op
-// const Lookup = require('../models/Lookup.model')
-// const info = require('../models/info.model')
 
+module.exports = {
 
-    exports.create=(req, res)=>{
-        // if(!req.body){
-        //     res.status(400).send({
-        //         message: "Content can not be empty!"
-        //     })
-        //     return
-        // }
+    create:(req, res)=>{
+        
 
-        console.log('Did I arrive here?')
-
-        // req.body ? 
-        // models.create(req.body)
-        // .then(data =>{
-        //     console.log(data.dataValues.id)
-        //     res.send(data)
-        // })
-        // .catch(err =>{
-        //     res.status(500).send({
-        //         message:
-        //     err.message || "Some error occurred while creating the Lookup"
-        //     })
-        // }):
-        // ()=>{
-        //     res.status(400).send({
-        //         message:"Content can not be empty!"
-        //     })
-        //     return
-        // }
-
-        // const Lookup = {
-        //     name: req.body.name,
-        //     abbreviation:req.body.abbreviation
-        // }
-
-        // Lookup.create(Lookup).then(data =>{
-        //     console.log(data.dataValues.id)
-        //     res.send(data)
-        // }).catch(err =>{
-        //     res.status(500).send({
-        //         message:
-        //     err.message || "Some error occurred while creating the Lookup"
-        //     })
-        // })
+        req.body ? 
+        models.create(req.body)
+        .then(data =>{
+            console.log(data.dataValues.id)
+            res.send(data)
+        })
+        .catch(err =>{
+            res.status(500).send({
+                message:
+            err.message || "Some error occurred while creating the Lookup"
+            })
+        }):
+        ()=>{
+            res.status(400).send({
+                message:"Content can not be empty!"
+            })
+            return
+        }
     },
 
-    exports.getAll=(req,res)=>{
-
-        // const name = req.query.name
-
-        // var condition = name ? {name: {[Op.like]: `%${name}%`}} : null
-
-        // Lookup.findAll({where:condition})
-        // .then(data =>{
-        //     res.send(data)
-        // })
-        // .catch(err =>{
-        //     res.status(500).send({
-        //         message:
-        //         err.message || "Error retrieving Lookup's data."
-        //     })
-        // })
+    getAll:(req,res)=>{
 
         const name = 'includeInfo' in req.query ?
         Lookup.findAll({include: info}):
@@ -81,7 +42,7 @@ const Op = db.Sequelize.Op
         })
     },
 
-    exports.getOne=(req,res)=>{
+    getOne:(req,res)=>{
 
         req.params.name ? 
         Lookup.findOne({where:{name:req.params.name}})
@@ -101,7 +62,7 @@ const Op = db.Sequelize.Op
         }
     },
 
-    exports.update=(req,res)=>{
+    update:(req,res)=>{
 
         req.body ?
         Lookup.update(req.body,{
@@ -125,7 +86,7 @@ const Op = db.Sequelize.Op
         }
     },
 
-    exports.delete=(req,res)=>{
+    delete:(req,res)=>{
         
         req.params?
         Lookup.delete(
@@ -149,17 +110,20 @@ const Op = db.Sequelize.Op
             }
     },
 
-    exports.deleteAll=(req,res)=>{
+    deleteAll:(req,res)=>{
         Lookup.destroy({
             where:{},
             truncat:false
         })
         .then(num =>{
-            res.send({message:'All Lookup is successfully deleted'})
+            num ? (res.send({message:"Succesfully deleted all"}))
+            : (res.send({message:"Failed deleted all"}))
         })
         .catch(err =>{
             res.status(500).send({
-                message:'Error in delete Lookup'
+                message:'Error in delete Lookups'
             })
         })
     }
+
+}
