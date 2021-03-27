@@ -1,18 +1,18 @@
-const fs = require('fs')
-const dates = require('../helpers/date')
+const fs = require('fs');
+const dates = require('../helpers/date');
 
 module.exports = {
-
-   writeToFile:(content, file)=>{
-
-       fs.appendFileSync(`./src/logs/${dates.fileDate()+'-'+file}.log`,file+':'+content+'\n',{flag:'a'}, err=>{
-            if (err) {
-
-                console.error(err)
-                return
-            }
-        })
-
-        
-    }
-}
+  writeToFile: (content, file) => {
+    fs.appendFileSync(
+      `./logs/${dates.fileDate() + '-' + file}.log`,
+      file + ':' + content + '\n',
+      { flag: 'a' },
+      err => {
+        if (err) {
+          console.error(err);
+          return;
+        }
+      }
+    );
+  },
+};
