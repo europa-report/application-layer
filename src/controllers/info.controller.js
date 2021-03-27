@@ -21,7 +21,7 @@ module.exports = {
         }).then(([rows,fields])=>{
             console.log(rows)
             res.send({result:rows})
-        }).catch(()=>sendErr(res,err))
+        }).catch((err)=>sendErr(res,err))
         .then(()=>db.conn().end())
     },
 
@@ -32,26 +32,27 @@ module.exports = {
             else{res.send({result:results})}
         }).then(([rows,fields])=>{
             console.log(rows)
-        }).catch(()=>{sendErr(res,err)})
-        .then( ()=>db.conn().end())
+            res.send({result:rows})
+        }).catch((err)=>{sendErr(res,err)})
+        .then(()=>db.conn().end())
     },
 
     getOne:(req,res)=>{
         
-        if(!req.params.id){
+        if(!req.query.id){
             sendStatus(res)
             return
         }
 
         db.conn().promise().query('select * from infos where id = ?',
-        [req.body.id],
+        [req.query.id],
         (err,results)=>{
             if(err){sendErr(res,err)}
             else{res.send({result:results})}
-        }).then(()=>{
-            console.log(results)
-            res.send({result:results})
-        }).catch(()=>{sendErr(res,err)})
+        }).then(([rows,fields])=>{
+            console.log(rows)
+            res.send({result:rows})
+        }).catch((err)=>{sendErr(res,err)})
         .then(()=>db.conn().end())
     },
 
@@ -62,34 +63,35 @@ module.exports = {
             return
         }
 
-        db.conn().promise().query('update set date = ? , subscribers = ?, active_subscribers = ?, submission = ?, comments = ? where id = ?',
+        db.conn().promise().query('update infos set date = ? , subscribers = ?, active_subscribers = ?, submission = ?, comments = ? where id = ?',
         [req.body.date, req.body.subscribers, 
             req.body.active_subscribers, req.body.submission, 
-            req.body.comments],
+            req.body.comments, req.body.id],
         (err,results)=>{
             if(err){sendErr(res,err)}
             else{res.send({result:results})}
-        }).then(()=>{
-            console.log(results)
-        }).catch(()=>{sendErr(res,err)})
+        }).then(([rows,fields])=>{
+            console.log(rows)
+            res.send({result:rows})
+        }).catch((err)=>{sendErr(res,err)})
         .then(()=>db.conn().end())
     },
 
     delete:(req,res)=>{
         
-        if(!req.params.id){
+        if(!req.query.id){
             sendStatus(res)
             return
         }
 
         db.conn().promise().query('delete from infos where id = ?',
-        [req.body.id],
+        [req.query.id],
         (err,results)=>{
             if(err){sendErr(res,err)}
             else{console.log(results)}
-        }).then(()=>{
+        }).then((results)=>{
             console.log(results)
-        }).catch(()=>{sendErr(res,err)})
+        }).catch((err)=>{sendErr(res,err)})
         .then(()=>db.conn().end())
     },
 
@@ -99,9 +101,9 @@ module.exports = {
         (err,results)=>{
             if(err){sendErr(res,err)}
             else{console.log(results)}
-        }).then(()=>{
+        }).then((results)=>{
             console.log(results)
-        }).catch(()=>{sendErr(res,err)})
+        }).catch((err)=>{sendErr(res,err)})
         .then(()=>db.conn().end())
     }
 }

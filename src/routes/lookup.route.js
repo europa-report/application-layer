@@ -7,7 +7,7 @@
 
     routers.get('/lookups',lookup.getAll)
 
-    routers.get('/:name',lookup.getOne)
+    routers.get('/lookup',lookup.getOne)
 
     routers.put('/lookup',lookup.update)
 

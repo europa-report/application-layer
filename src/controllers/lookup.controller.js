@@ -19,7 +19,7 @@ module.exports = {
         }).then(([rows,fields])=>{
             console.log(rows)
             res.send({result:rows})
-        }).catch(()=>sendErr(res,err))
+        }).catch((err)=>sendErr(res,err))
         .then(()=>db.conn().end())
 
     },
@@ -31,62 +31,66 @@ module.exports = {
             else{res.send({result:results})}
         }).then(([rows,fields])=>{
             console.log(rows)
-        }).catch(()=>{sendErr(res,err)})
-        .then( ()=>db.conn().end())
+            res.send({result:rows})
+        }).catch((err)=>{sendErr(res,err)})
+        .then(()=>db.conn().end())
 
     },
 
     getOne:(req,res)=>{
 
-        if(!req.body.name){
+        console.log(req.query.id)
+        if(!req.query.id){
             sendStatus(res)
             return
         }
 
-        db.conn().query('select * from lookups where id = ?',
-        [req.body.id],
-        (err,results)=>{
-            if(err){sendErr(res,err)}
+        db.conn().promise().query('select * from lookups where id = ?',
+        [req.query.id],
+        (error,results)=>{
+            if(error){sendErr(res,error)}
             else{res.send({result:results})}
-        }).then(()=>{
-            console.log(results)
-            res.send({result:results})
-        }).catch(()=>{sendErr(res,err)})
+        }).then(([rows,fields])=>{
+            console.log(rows)
+            res.send({result:rows})
+        }).catch((err)=>{sendErr(res,err)})
         .then(()=>db.conn().end())
 
     },
 
     update:(req,res)=>{
 
+
         if(!req.body){
             sendStatus(res)
             return
         }
 
-        db.conn().query('update set name = ? , addreviation = ? where id = ?',
+        db.conn().promise().query('update lookups set name = ?, abbreviation = ? where id = ?',
         [req.body.name, req.body.abbreviation, req.body.id],
         (err,results)=>{
             if(err){sendErr(res,err)}
             else{res.send({result:results})}
-        }).then(()=>{
-            console.log(results)
-        }).catch(()=>{sendErr(res,err)})
+        }).then(([rows,fields])=>{
+            console.log(rows)
+            res.send({result:rows})
+        }).catch((err)=>{sendErr(res,err)})
         .then(()=>db.conn().end())
     },
 
     delete:(req,res)=>{
         
-        if(!req.params.id){
+        if(!req.query.id){
             sendStatus(res)
             return
         }
 
         db.conn().query('delete from lookups where id = ?',
-        [req.body.id],
+        [req.query.id],
         (err,results)=>{
             if(err){sendErr(res,err)}
             else{console.log(results)}
-        }).then(()=>{
+        }).then((results)=>{
             console.log(results)
         }).catch(()=>{sendErr(res,err)})
         .then(()=>db.conn().end())
@@ -100,7 +104,7 @@ module.exports = {
         (err,results)=>{
             if(err){sendErr(res,err)}
             else{console.log(results)}
-        }).then(()=>{
+        }).then((results)=>{
             console.log(results)
         }).catch(()=>{sendErr(res,err)})
         .then(()=>db.conn().end())
