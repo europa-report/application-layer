@@ -1,5 +1,4 @@
-const db = require('../models')
-const Lookup = db.lookups
+const db = require('../configs/db.conn')
 const status = require('../helpers/status')
 const {sendStatus, sendErr, sendConfirmation } = status
 
@@ -12,27 +11,29 @@ module.exports = {
             return
         }
 
-        Lookup.create(req.body)
-        .then(data =>{
-            res.send(data)
-        })
-        .catch(err =>{
-            sendErr(res,err)
-        })
-        
+        db.conn().promise().query('insert into lookups (name, abbreviation) values (?,?)',
+        [req.body.name, req.body.abbreviation],
+        (err, results)=>{
+            if(err) {sendErr(res, err)}
+            else {res.send({result:results})}
+        }).then(([rows,fields])=>{
+            console.log(rows)
+            res.send({result:rows})
+        }).catch(()=>sendErr(res,err))
+        .then(()=>db.conn().end())
+
     },
 
     getAll:(req,res)=>{
 
-        'includeInfo' in req.query ?
-        Lookup.findAll({include: info}):
-        Lookup.findAll()
-        .then(data =>{
-            res.send(data)
-        })
-        .catch(err =>{
-            sendErr(res,err)
-        })
+        db.conn().promise().query('select * from lookups',(err, results)=>{
+            if(err){sendErr(res,err)}
+            else{res.send({result:results})}
+        }).then(([rows,fields])=>{
+            console.log(rows)
+        }).catch(()=>{sendErr(res,err)})
+        .then( ()=>db.conn().end())
+
     },
 
     getOne:(req,res)=>{
@@ -42,13 +43,17 @@ module.exports = {
             return
         }
 
-        Lookup.findOne({where:{name:req.params.name}})
-        .then(data =>{
-            res.send(data)
-        })
-        .catch(err => {
-            status.sendErr(res,err)
-        })
+        db.conn().query('select * from lookups where id = ?',
+        [req.body.id],
+        (err,results)=>{
+            if(err){sendErr(res,err)}
+            else{res.send({result:results})}
+        }).then(()=>{
+            console.log(results)
+            res.send({result:results})
+        }).catch(()=>{sendErr(res,err)})
+        .then(()=>db.conn().end())
+
     },
 
     update:(req,res)=>{
@@ -57,16 +62,16 @@ module.exports = {
             sendStatus(res)
             return
         }
-        
-        Lookup.update(req.body,{
-            where: {name:req.body.name}
-        })
-        .then(num =>{
-            sendConfirmation(res,num)
-        })
-        .catch(err =>{
-            sendErr(res,err)
-        })
+
+        db.conn().query('update set name = ? , addreviation = ? where id = ?',
+        [req.body.name, req.body.abbreviation, req.body.id],
+        (err,results)=>{
+            if(err){sendErr(res,err)}
+            else{res.send({result:results})}
+        }).then(()=>{
+            console.log(results)
+        }).catch(()=>{sendErr(res,err)})
+        .then(()=>db.conn().end())
     },
 
     delete:(req,res)=>{
@@ -76,30 +81,30 @@ module.exports = {
             return
         }
 
-        Lookup.delete(
-            {
-                where:{id: req.params.id}
-            })
-            .then(num=>{
-                sendConfirmation(res,num)
-            })
-            .catch(err =>{
-                sendErr(res,err)
-            })
+        db.conn().query('delete from lookups where id = ?',
+        [req.body.id],
+        (err,results)=>{
+            if(err){sendErr(res,err)}
+            else{console.log(results)}
+        }).then(()=>{
+            console.log(results)
+        }).catch(()=>{sendErr(res,err)})
+        .then(()=>db.conn().end())
+
     },
 
     deleteAll:(req,res)=>{
 
-        Lookup.destroy({
-            where:{},
-            truncat:false
-        })
-        .then(num =>{
-            sendConfirmation(res, num)
-        })
-        .catch(err =>{
-            sendErr(res,err)
-        })
+
+        db.conn().query('delete from lookups',
+        (err,results)=>{
+            if(err){sendErr(res,err)}
+            else{console.log(results)}
+        }).then(()=>{
+            console.log(results)
+        }).catch(()=>{sendErr(res,err)})
+        .then(()=>db.conn().end())
+
     }
 
 }

@@ -1,5 +1,4 @@
-const db = require('../models')
-const Info = db.infos
+const db = require('../configs/db.conn')
 const status = require('../helpers/status')
 const { sendStatus, sendConfirmation, sendErr } = require('../helpers/status')
 
@@ -11,24 +10,30 @@ module.exports = {
             sendStatus(res)
             return
         }
-        
-        Info.create(req.body)
-        .then(data =>{
-            res.send(data)
-        })
-        .catch(err =>{
-            sendErr(res, err)
-        })
+
+        db.conn().promise().query('insert into infos (date, subscribers, active_subscribers, submission, comments, lookupId) values (?,?,?,?,?,?)',
+        [req.body.date, req.body.subscribers, 
+            req.body.active_subscribers, req.body.submission, 
+            req.body.comments, req.body.lookupId],
+        (err, results)=>{
+            if(err) {sendErr(res, err)}
+            else {res.send({result:results})}
+        }).then(([rows,fields])=>{
+            console.log(rows)
+            res.send({result:rows})
+        }).catch(()=>sendErr(res,err))
+        .then(()=>db.conn().end())
     },
 
     getAll:(req,res)=>{
-        Info.findAll()
-        .then(data=>{
-            res.send(data)
-        })
-        .catch(err=>{
-            status.sendErr(res,err)
-        })
+
+        db.conn().promise().query('select * from infos',(err, results)=>{
+            if(err){sendErr(res,err)}
+            else{res.send({result:results})}
+        }).then(([rows,fields])=>{
+            console.log(rows)
+        }).catch(()=>{sendErr(res,err)})
+        .then( ()=>db.conn().end())
     },
 
     getOne:(req,res)=>{
@@ -38,13 +43,16 @@ module.exports = {
             return
         }
 
-        Info.findOne({where:{id:req.params.id}})
-        .then(data=>{
-            res.send(data)
-        })
-        .catch(err=>{
-            status.sendErr(res, err)
-        })
+        db.conn().promise().query('select * from infos where id = ?',
+        [req.body.id],
+        (err,results)=>{
+            if(err){sendErr(res,err)}
+            else{res.send({result:results})}
+        }).then(()=>{
+            console.log(results)
+            res.send({result:results})
+        }).catch(()=>{sendErr(res,err)})
+        .then(()=>db.conn().end())
     },
 
     update:(req,res)=>{
@@ -54,13 +62,17 @@ module.exports = {
             return
         }
 
-        Info.update(req.body,{
-            where: {id:req.body.id}
-        })
-        .then(num=>{
-            sendConfirmation(res,num)
-        })
-        
+        db.conn().promise().query('update set date = ? , subscribers = ?, active_subscribers = ?, submission = ?, comments = ? where id = ?',
+        [req.body.date, req.body.subscribers, 
+            req.body.active_subscribers, req.body.submission, 
+            req.body.comments],
+        (err,results)=>{
+            if(err){sendErr(res,err)}
+            else{res.send({result:results})}
+        }).then(()=>{
+            console.log(results)
+        }).catch(()=>{sendErr(res,err)})
+        .then(()=>db.conn().end())
     },
 
     delete:(req,res)=>{
@@ -70,28 +82,26 @@ module.exports = {
             return
         }
 
-        Info.delete({
-            where:{id:req.params.id}
-        })
-        .then(num=>{
-            sendConfirmation(res,num)
-        })
-        .catch(err=>{
-            sendErr(res,err)
-        })
+        db.conn().promise().query('delete from infos where id = ?',
+        [req.body.id],
+        (err,results)=>{
+            if(err){sendErr(res,err)}
+            else{console.log(results)}
+        }).then(()=>{
+            console.log(results)
+        }).catch(()=>{sendErr(res,err)})
+        .then(()=>db.conn().end())
     },
 
     deleteAll:(req,res)=>{
 
-        Info.destroy({
-            where:{},
-            truncat:false
-        })
-        .then(num=>{
-            sendConfirmation(res,num)
-        })
-        .catch(err=>{
-            sendErr(res,err)
-        })
+        db.conn().promise().query('delete from infos',
+        (err,results)=>{
+            if(err){sendErr(res,err)}
+            else{console.log(results)}
+        }).then(()=>{
+            console.log(results)
+        }).catch(()=>{sendErr(res,err)})
+        .then(()=>db.conn().end())
     }
 }

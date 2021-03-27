@@ -1,10 +1,9 @@
 const express = require('express')
 const app = express()
-const db = require('./models')
 const bodyParser = require("body-parser")
 const lookups = require('./routes/lookup.route')
 const infos = require('./routes/info.route')
-const port = process.env.PORT || 8080
+const port = process.env.PORT || 5000
 const chalk = require('chalk')
 
 app.get(`/`, (req, res) => {
@@ -13,10 +12,6 @@ app.get(`/`, (req, res) => {
 
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
-
-db.sequelize.sync({force:true}).then(() => {
-  console.log('Drop and re-sync db.')
-})
 
 app.use(lookups)
 app.use(infos)
